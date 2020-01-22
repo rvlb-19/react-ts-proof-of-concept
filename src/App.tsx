@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { http } from './http';
+import * as http from './http';
 
 import Input from './components/Input';
 import Button from './components/Button';
@@ -10,9 +10,13 @@ interface SWApiResponse {
   results: ICharacter[];
 }
 
+interface FormDataState {
+  characterName: string;
+}
+
 const App: React.FC = () => {
-  const [formData, setFormData] = useState({
-    'characterName': ''
+  const [formData, setFormData] = useState<FormDataState>({
+    characterName: ''
   });
   const onChangeHandler = (name: string) => (event: React.FormEvent<HTMLInputElement>) => {
     const data = { ...formData, [name]: event.currentTarget.value };
@@ -24,7 +28,7 @@ const App: React.FC = () => {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { characterName } = formData;
-    const response = await http<SWApiResponse>(`https://swapi.co/api/people?name=${characterName}`);
+    const response = await http.get<SWApiResponse>(`https://swapi.co/api/people?name=${characterName}`);
     // parsedBody may be undefined, so we must provide a fallback (in our case, an empty array)
     setResults(response.parsedBody?.results || []);
   }
